@@ -107,3 +107,26 @@ class TestBooksCollector:
         collector.add_new_book("Преступление и наказание")
         collector.add_book_in_favorites("Преступление и наказание")
         assert collector.get_list_of_favorites_books() == ["Война и мир", "Преступление и наказание"]
+    def test_get_books_genre(self, collector):
+        collector.add_new_book("Война и мир")
+        collector.add_new_book("Преступление и наказание")
+        collector.set_book_genre("Война и мир", "Фантастика")
+        collector.set_book_genre("Преступление и наказание", "Ужасы")
+
+        genres = collector.get_books_genre()
+        assert "Война и мир" in genres
+        assert "Преступление и наказание" in genres
+    @pytest.mark.parametrize("book_name, expected_genre", [
+        ("Война и мир", "Фантастика"),
+        ("Преступление и наказание", "Ужасы"),
+        ("Гарри Поттер", ""),  # Если жанр не установлен
+    ])
+    def test_get_book_genre(self, collector, book_name, expected_genre):
+        collector.add_new_book("Война и мир")
+        collector.add_book_in_favorites("Война и мир")
+        collector.set_book_genre("Война и мир", "Фантастика")
+        collector.add_new_book("Преступление и наказание")
+        collector.set_book_genre("Преступление и наказание", "Ужасы")
+        collector.add_new_book("Гарри Поттер")  # Жанр не установлен
+
+        assert collector.get_book_genre(book_name) == expected_genre
